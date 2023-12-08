@@ -175,7 +175,7 @@ struct ContentView: View {
                     Spacer().frame(maxHeight:proxy.size.height)
                 }
             }.navigationDestination(isPresented: self.$shouldShowPredictResult) {
-                PredictResultView(userSelectImage: self.userSelctedImage ?? Image("heating_pad451"))
+                PredictResultView(userSelectImage: self.userSelctedImage ?? Image(systemName: "photo.fill.on.rectangle.fill"))
             }.navigationDestination(for: Int.self){ number in
                 switch number{
                 case 3:

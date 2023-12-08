@@ -129,9 +129,9 @@ struct MapView: View {
                 }){
                     Text("물품순")
                     if (sortObject.sortOrder){
-                        Image(systemName:"arrowtriangle.up.fill")
+                        Image(systemName:"chevron.up")
                     }else{
-                        Image(systemName:"arrowtriangle.down.fill")
+                        Image(systemName:"chevron.down")
                     }
                 }.foregroundColor(.black)
                 Button(action: {
@@ -145,9 +145,9 @@ struct MapView: View {
                 }){
                     Text("거리순")
                     if (sortObject.sortOrder){
-                        Image(systemName:"arrowtriangle.up.fill").padding(.trailing, 10)
+                        Image(systemName:"chevron.up").padding(.trailing, 10)
                     }else{
-                        Image(systemName:"arrowtriangle.down.fill").padding(.trailing, 10)
+                        Image(systemName:"chevron.down").padding(.trailing, 10)
                     }
                 }.foregroundColor(.black)
             }.frame(width:proxy.size.width, height:20, alignment: .trailing)
