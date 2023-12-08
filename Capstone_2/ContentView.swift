@@ -10,7 +10,7 @@ struct ContentView: View {
     @State private var photosPickerItem: PhotosPickerItem?
     @State private var userSelctedImage: Image?
     @State private var isLogin =  true
-    @State private var currentUserEmail = "dmswns0147@gmail.com"
+    @State private var currentUserEmail = "not login"
     
     init(){
         isLogin = FirebaseManager.shared.auth.currentUser?.uid == nil
@@ -189,18 +189,20 @@ struct ContentView: View {
             }
         }
         .fullScreenCover(isPresented:$isLogin){
-            AccountView(didCompleteLoginProcess: {
+            AccountView(didCompleteLoginProcess: { email in
                 self.isLogin = false
-                guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
-                FirebaseManager.shared.firestore.collection("users").document(uid).getDocument{
-                    snapshot, error in
-                    if let error = error {
-                        print(error)
-                        return
-                    }
-                    guard let data = snapshot?.data() else { return }
-                    self.currentUserEmail = data["email"] as? String ?? ""
-                }
+                self.currentUserEmail = email
+//                guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+//                FirebaseManager.shared.firestore.collection("users").document(uid).getDocument{
+//                    snapshot, error in
+//                    if let error = error {
+//                        print(error)
+//                        return
+//                    }
+//                    guard let data = snapshot?.data() else { return }
+//                    self.currentUserEmail = data["email"] as? String ?? ""
+//                }
+                
             })
         }
     }

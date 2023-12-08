@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Alamofire
 
 struct LoginView: View {
     @State private var email = ""
@@ -13,7 +14,7 @@ struct LoginView: View {
     @State private var isError = false
     @State private var errorCode = 0
     @State private var errorMessage = ""
-    let didCompleteLoginProcess: () -> ()
+    let didCompleteLoginProcess: (String) -> ()
     
     var body: some View {
         
@@ -46,19 +47,46 @@ struct LoginView: View {
     }
     
     private func signIn(){
-        FirebaseManager.shared.auth.signIn(withEmail: email, password: password){
-            result, error in
-            if let err = error as NSError?{
-                print(err.code)
-                print(err.localizedDescription)
-                isError.toggle()
-                errorCode = err.code
-                errorMessage = err.localizedDescription
-                return
+        //        FirebaseManager.shared.auth.signIn(withEmail: email, password: password){
+        //            result, error in
+        //            if let err = error as NSError?{
+        //                print(err.code)
+        //                print(err.localizedDescription)
+        //                isError.toggle()
+        //                errorCode = err.code
+        //                errorMessage = err.localizedDescription
+        //                return
+        //            }
+        //            self.didCompleteLoginProcess()
+        //            print("login success")
+        //        }
+        if !(AccountView.isValidEmail(target: email)){
+            errorMessage = "올바른 이메일 형식이 아닙니다."
+            isError.toggle()
+        }else if(!(8...20 ~= password.count)){
+            errorMessage = "비밀번호의 길이는 8이상 20이하여야 합니다."
+            isError.toggle()
+        }else{
+            let url = "http://15.164.100.224:8080/rest/signin"
+            let params:[String:Any] = ["email":email, "password":password]
+            AF.request(url,
+                       method: .post,
+                       parameters: params, //request body에 담김
+                       encoding: JSONEncoding(options: []),
+                       headers: ["Content-Type":"application/json", "Accept":"application/json"])
+            .responseDecodable(of: Response.self){ response in
+                switch response.result {
+                case .success(let dTypes):
+                    if dTypes.code == 0{
+                        self.didCompleteLoginProcess(email)
+                    }else{
+                        errorMessage = dTypes.requestResult
+                        isError.toggle()
+                    }
+                case .failure(let error):
+                    dump(error)
+                }
             }
-            self.didCompleteLoginProcess()
-            print("login success")
         }
-        
     }
 }

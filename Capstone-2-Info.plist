@@ -7,5 +7,7 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>Primary App Icon Set Name</key>
+	<string>AppIcon</string>
 </dict>
 </plist>

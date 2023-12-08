@@ -6,7 +6,12 @@
 //
 
 import SwiftUI
+import Alamofire
 
+struct Response: Decodable{
+    var requestResult:String
+    var code:Int
+}
 struct CommonTextfieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
         ZStack {
@@ -82,29 +87,29 @@ struct SignUpView: View {
     }
     
     private func createNewAccount(){
-        FirebaseManager.shared.auth.createUser(withEmail: email, password: password){
-            result, error in
-            if let err = error as NSError?{
-                print(err.code)
-                print(err.localizedDescription)
-                isError.toggle()
-                errorCode = err.code
-                errorMessage = err.localizedDescription
-                return
-            }
-            let uid = result?.user.uid ?? ""
-            FirebaseManager.shared.firestore.collection("users").document(uid).setData([
-                "uid":uid, "email":email])
+        if !(AccountView.isValidEmail(target: email)){
+            errorMessage = "올바른 이메일 형식이 아닙니다."
             isError.toggle()
-            errorCode = 0
-            errorMessage = "sign up success!!"
-            email = ""
-            password = ""
+        }else if(!(8...20 ~= password.count)){
+            errorMessage = "비밀번호의 길이는 8이상 20이하여야 합니다."
+            isError.toggle()
+        }else{
+            let url = "http://15.164.100.224:8080/rest/signup"
+            let params:[String:Any] = ["email":email, "password":password]
+            AF.request(url,
+                       method: .post,
+                       parameters: params, //request body에 담김
+                       encoding: JSONEncoding(options: []),
+                       headers: ["Content-Type":"application/json", "Accept":"application/json"])
+            .responseDecodable(of: Response.self){ response in
+                switch response.result {
+                case .success(let dTypes):
+                    errorMessage = dTypes.requestResult
+                    isError.toggle()
+                case .failure(let error):
+                    dump(error)
+                }
+            }
         }
     }
-}
-
-
-#Preview {
-    SignUpView()
 }

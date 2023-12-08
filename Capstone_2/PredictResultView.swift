@@ -38,7 +38,7 @@ struct PredictResultView: View {
                         .frame(width: UIScreen.main.bounds.width,
                                height: (UIScreen.main.bounds.width / self.userSelectUIImage.size.width) * self.userSelectUIImage.size.height)
                         .onAppear{
-                            let url = "http://3.39.191.128:8080/Rest/PredictionRequest"
+                            let url = "http://15.164.100.224:8080/rest/predict"
 //                            let url = "http://localhost:8080/Rest/PredictionRequest"
                             AF.upload(multipartFormData: { multipartData in
                                 multipartData.append(userSelectUIImage.jpegData(compressionQuality: 1.0)!, withName: "image", fileName:"test.jpeg", mimeType: "image/jpeg")
